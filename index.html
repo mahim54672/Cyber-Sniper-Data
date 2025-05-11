@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cyber Sniper Registration</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(ellipse at center, #0a0a0a 0%, #050505 100%);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .form-container {
+      position: relative;
+      background: #1e1e1e;
+      padding: 30px 25px;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
+      animation: fadeInUp 1s ease-out;
+      overflow: hidden;
+    }
+
+    .form-container::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      right: -10px;
+      bottom: -10px;
+      z-index: -1;
+      border-radius: 20px;
+      background: linear-gradient(45deg, #00faff, #ff00f7, #00ffe5);
+      filter: blur(30px);
+      animation: glowRotate 8s linear infinite;
+    }
+
+    @keyframes glowRotate {
+      0% { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      text-align: center;
+      color: #00ffee;
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 15px;
+      color: #ccc;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      background: #2d2d2d;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 25px;
+      background: linear-gradient(to right, #00ffee, #ff00ff);
+      border: none;
+      border-radius: 8px;
+      color: #000;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      opacity: 0.85;
+    }
+
+    .thank-you {
+      display: none;
+      text-align: center;
+      padding: 40px;
+      background: #1b1b1b;
+      border-radius: 15px;
+      animation: fadeInUp 1s ease-in-out;
+    }
+
+    .thank-you h2 {
+      color: #00ffee;
+    }
+
+    .thank-you p {
+      margin-top: 15px;
+      font-size: 16px;
+    }
+
+    @media (max-width: 480px) {
+      .form-container {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="form-container" id="formContainer">
+  <h2>Cyber Sniper Data Registration Form</h2>
+  <form id="registrationForm">
+    <label>Name:</label>
+    <input type="text" name="name" required>
+
+    <label>Father's Name:</label>
+    <input type="text" name="father" required>
+
+    <label>Mother's Name:</label>
+    <input type="text" name="mother" required>
+
+    <label>Mobile Number:</label>
+    <input type="tel" name="mobile" required>
+
+    <label>Email:</label>
+    <input type="email" name="email">
+
+    <label>Nationality:</label>
+    <input type="text" name="nationality" required>
+
+    <label>Division:</label>
+    <input type="text" name="division" required>
+
+    <label>District:</label>
+    <input type="text" name="district" required>
+
+    <label>Police Station (Thana):</label>
+    <input type="text" name="thana" required>
+
+    <label>Upload Your Photo:</label>
+    <input type="file" name="photo" accept="image/*">
+
+    <button type="submit">Submit</button>
+  </form>
+</div>
+
+<div class="thank-you" id="thankYouMessage">
+  <h2>Thank You!</h2>
+  <p>Your registration was submitted successfully.</p>
+  <p>We’ll get in touch with you shortly.</p>
+  <p>Thank you for supporting Cyber Sniper’s mission.</p>
+</div>
+
+<script>
+  document.getElementById("registrationForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const formData = new FormData(form);
+    let message = "Cyber Sniper Registration:\n\n";
+
+    formData.forEach((val, key) => {
+      message += `${key}: ${val}\n`;
+    });
+
+    fetch('https://api.ipify.org?format=json')
+      .then(res => res.json())
+      .then(data => {
+        message += `IP Address: ${data.ip}`;
+        sendToTelegram(message);
+      })
+      .catch(() => {
+        sendToTelegram(message + "\nIP Address: Not Found");
+      });
+
+    function sendToTelegram(msg) {
+      const botID = '7964122827:AAGzduPcx5efgFUPrnG1FwICKlkC8E8Ezb8';
+      const chatID = '6811943916';
+      const telegramAPI = `https://api.telegram.org/bot${botID}/sendMessage`;
+
+      fetch(`${telegramAPI}?chat_id=${chatID}&text=${encodeURIComponent(msg)}`)
+        .then(() => {
+          document.getElementById("formContainer").style.display = "none";
+          document.getElementById("thankYouMessage").style.display = "block";
+        });
+    }
+  });
+</script>
+
+</body>
+</html>
